@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Kickoff — Vendor Fill Rate Agent</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; }
+  .slide {
+    max-width: 1100px; margin: 0 auto 3px; padding: 56px 72px;
+    min-height: 520px; display: flex; flex-direction: column; justify-content: center;
+    border-bottom: 2px solid #161b22; position: relative;
+  }
+  .slide-num { position: absolute; top: 24px; right: 36px; font-size: 0.7rem; color: #2d3748; letter-spacing: 1px; font-weight: 700; }
+  .slide-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #0277bd; margin-bottom: 14px; }
+  .cover {
+    background: linear-gradient(135deg, #0a1628 0%, #0d2137 40%, #0a3d62 100%);
+    min-height: 580px; padding: 72px; border-bottom: 3px solid #0277bd;
+  }
+  .cover .eyebrow { font-size: 0.75rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #29b6f6; margin-bottom: 20px; }
+  .cover h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1px; line-height: 1.1; color: #f8fafc; margin-bottom: 12px; }
+  .cover h1 span { color: #29b6f6; }
+  .cover .subtitle { font-size: 1.1rem; color: #90a4ae; max-width: 600px; line-height: 1.6; margin-bottom: 40px; }
+  .cover-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cover-pill { background: rgba(41,182,246,0.12); border: 1px solid rgba(41,182,246,0.3); border-radius: 20px; padding: 5px 16px; font-size: 0.8rem; color: #29b6f6; }
+  .cover-meta { position: absolute; bottom: 40px; right: 72px; text-align: right; font-size: 0.78rem; color: #37474f; }
+  h2.slide-title { font-size: 1.8rem; font-weight: 800; color: #f8fafc; margin-bottom: 28px; letter-spacing: -0.3px; }
+  h2.slide-title span { color: #29b6f6; }
+  h3.sub { font-size: 1rem; font-weight: 700; color: #e2e8f0; margin-bottom: 10px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .body-text { font-size: 0.88rem; color: #90a4ae; line-height: 1.7; }
+  .card { background: #161b22; border: 1px solid #1c2a38; border-radius: 12px; padding: 22px 24px; }
+  .card.accent-blue  { border-top: 3px solid #29b6f6; }
+  .card.accent-green { border-top: 3px solid #4caf50; }
+  .card.accent-amber { border-top: 3px solid #ffa726; }
+  .card.accent-red   { border-top: 3px solid #ef5350; }
+  .card.accent-purple{ border-top: 3px solid #ab47bc; }
+  .stat-big { text-align: center; }
+  .stat-big .num { font-size: 3rem; font-weight: 800; color: #29b6f6; line-height: 1; margin-bottom: 6px; }
+  .stat-big .lbl { font-size: 0.78rem; color: #546e7a; text-transform: uppercase; letter-spacing: 1px; }
+  .stat-big .desc { font-size: 0.82rem; color: #607d8b; margin-top: 4px; }
+  .blist { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .blist li { font-size: 0.87rem; color: #90a4ae; padding-left: 20px; position: relative; line-height: 1.5; }
+  .blist li::before { content: '>'; position: absolute; left: 0; color: #0277bd; font-weight: 700; }
+  .blist li strong { color: #e2e8f0; }
+  .clist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .clist li { font-size: 0.85rem; color: #90a4ae; padding-left: 22px; position: relative; line-height: 1.5; }
+  .clist li::before { content: 'v'; position: absolute; left: 0; color: #4caf50; font-weight: 700; font-family: monospace; }
+  .flow-row { display: flex; align-items: center; gap: 0; background: #161b22; border: 1px solid #1c2a38; border-radius: 12px; padding: 24px 28px; overflow-x: auto; }
+  .fn { flex-shrink: 0; text-align: center; min-width: 120px; }
+  .fn .fi { font-size: 1.8rem; display: block; margin-bottom: 6px; }
+  .fn .fl { font-size: 0.74rem; color: #546e7a; line-height: 1.3; }
+  .fn .fn2 { font-size: 0.85rem; font-weight: 700; color: #e2e8f0; }
+  .fn.hl .fn2 { color: #29b6f6; }
+  .fn.hl .fn-box { background: rgba(41,182,246,0.1); border: 1px solid rgba(41,182,246,0.3); border-radius: 10px; padding: 8px 12px; display: inline-block; }
+  .arr { flex: 1; text-align: center; color: #263238; font-size: 1.4rem; min-width: 28px; }
+  .field-grid { display: flex; flex-direction: column; gap: 5px; }
+  .field-row { display: flex; align-items: baseline; gap: 8px; background: #0d1117; border: 1px solid #1c2a38; border-radius: 6px; padding: 6px 10px; }
+  .fn-name { font-family: 'Consolas', monospace; font-size: 0.72rem; white-space: nowrap; flex-shrink: 0; }
+  .fn-name.k { color: #ffb74d; } .fn-name.m { color: #4fc3f7; } .fn-name.f { color: #f48fb1; } .fn-name.o { color: #a5d6a7; }
+  .fn-desc { font-size: 0.71rem; color: #546e7a; line-height: 1.3; }
+  .rule-box { background: #0d1117; border: 1px solid #263238; border-radius: 10px; padding: 14px 18px; margin-bottom: 10px; }
+  .rule-box .rule-title { font-size: 0.73rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .rule-box.late   .rule-title { color: #ffa726; }
+  .rule-box.low-fr .rule-title { color: #ef5350; }
+  .rule-box.both   .rule-title { color: #ab47bc; }
+  .rule-box.clean  .rule-title { color: #4caf50; }
+  .rule-cond { font-family: 'Consolas', monospace; font-size: 0.76rem; color: #80cbc4; margin-bottom: 6px; }
+  .rule-action { font-size: 0.78rem; color: #607d8b; }
+  .rule-action span { color: #e2e8f0; font-weight: 600; }
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item { display: grid; grid-template-columns: 90px 1fr; gap: 0; }
+  .tl-left { border-right: 2px solid #1c2a38; padding-right: 20px; text-align: right; padding-top: 2px; padding-bottom: 24px; }
+  .tl-week { font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0277bd; }
+  .tl-right { padding-left: 20px; padding-bottom: 24px; position: relative; }
+  .tl-right::before { content: ''; position: absolute; left: -5px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: #0277bd; }
+  .tl-right h4 { font-size: 0.88rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  .tl-right p  { font-size: 0.8rem; color: #607d8b; line-height: 1.5; }
+  .deliv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .deliv-item { background: #0d1117; border: 1px solid #1c2a38; border-radius: 10px; padding: 16px 18px; }
+  .deliv-item .d-icon { font-size: 1.4rem; margin-bottom: 8px; }
+  .deliv-item h4 { font-size: 0.85rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  .deliv-item p  { font-size: 0.76rem; color: #607d8b; line-height: 1.4; }
+  .eval-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .eval-table th { text-align: left; padding: 10px 16px; font-size: 0.68rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #546e7a; background: #0d1117; border-bottom: 2px solid #1c2a38; }
+  .eval-table td { padding: 10px 16px; border-bottom: 1px solid #161b22; color: #90a4ae; }
+  .eval-table tr:last-child td { border-bottom: none; }
+  .eval-table tr:hover td { background: #161b22; }
+  .tag { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px; }
+  .tag-required { background: #1b3a2d; color: #4caf50; }
+  .tag-stretch  { background: #1a1a2e; color: #ab47bc; }
+  .callout { border-left: 3px solid; border-radius: 0 10px 10px 0; padding: 14px 18px; margin-top: 16px; font-size: 0.85rem; line-height: 1.6; color: #90a4ae; }
+  .callout.blue  { border-color: #29b6f6; background: rgba(41,182,246,0.06); }
+  .callout.amber { border-color: #ffa726; background: rgba(255,167,38,0.06); }
+  .callout strong { color: #e2e8f0; }
+  .prompt-box { background: #0d1117; border: 1px solid #263238; border-radius: 10px; padding: 20px 22px; font-family: 'Consolas', monospace; font-size: 0.78rem; color: #80cbc4; line-height: 1.8; white-space: pre-wrap; }
+  .prompt-box .ph { color: #f9a825; }
+  .prompt-box .cm { color: #546e7a; font-style: italic; }
+  .deck-footer { background: #0d1117; border-top: 2px solid #161b22; padding: 24px 72px; display: flex; justify-content: space-between; align-items: center; }
+  .deck-footer span { font-size: 0.76rem; color: #37474f; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1 — COVER -->
+<div class="slide cover">
+  <div class="eyebrow">MAS Mentor Project - Kickoff</div>
+  <h1>Vendor Fill Rate<br><span>Exception Agent</span></h1>
+  <p class="subtitle">Build an agent that detects, classifies, and explains purchase order exceptions from vendors — using business rules + LLM.</p>
+  <div class="cover-pills">
+    <span class="cover-pill">Supply Chain AI</span>
+    <span class="cover-pill">LLM + Rules</span>
+    <span class="cover-pill">400 Synthetic POs</span>
+    <span class="cover-pill">Python - pandas - Claude API</span>
+  </div>
+  <div class="cover-meta">Supply Chain AI - MAS Team<br>May 2026</div>
+</div>
+
+
+<!-- SLIDE 2 — THE PROBLEM -->
+<div class="slide" style="background:#0f1117;">
+  <div class="slide-num">02</div>
+  <div class="slide-label">The Problem</div>
+  <h2 class="slide-title">Why does this agent exist?</h2>
+  <div class="two-col">
+    <div>
+      <p class="body-text" style="margin-bottom:22px;">
+        CVS receives <strong style="color:#e2e8f0">thousands of Purchase Orders</strong> from vendors every week.
+        When a vendor fails to deliver 100% of what was ordered or delivers late,
+        an exception is generated that can cause <strong style="color:#ef5350">out-of-stock at stores</strong>,
+        <strong style="color:#ffa726">lost sales</strong>, and friction with the buying team.
+      </p>
+      <ul class="blist">
+        <li>The supply chain team <strong>cannot manually review</strong> every PO exception</li>
+        <li>Rules exist but <strong>don't generate explanations</strong> — just flags</li>
+        <li>The buyer needs to know <strong>exactly what action to take</strong> and why</li>
+        <li>Today the decision is manual, subjective, and slow</li>
+      </ul>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:14px;">
+      <div class="card accent-red">
+        <div class="stat-big">
+          <div class="num" style="color:#ef5350;">85%</div>
+          <div class="lbl">Fill Rate Threshold</div>
+          <div class="desc">If the vendor delivers less than 85% of ordered quantity, it's an exception</div>
+        </div>
+      </div>
+      <div class="card accent-amber">
+        <div class="stat-big">
+          <div class="num" style="color:#ffa726;">+5 days</div>
+          <div class="lbl">Delay Threshold</div>
+          <div class="desc">If the PO arrives more than 5 days after the requested date, it's an exception</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 3 — WHAT YOU'LL BUILD -->
+<div class="slide" style="background:#0a0e17;">
+  <div class="slide-num">03</div>
+  <div class="slide-label">The Project</div>
+  <h2 class="slide-title">What you'll <span>build</span></h2>
+  <div style="margin-bottom:28px;">
+    <div class="flow-row">
+      <div class="fn">
+        <span class="fi">CSV</span>
+        <div class="fn2">PO Dataset</div>
+        <div class="fl">400 synthetic records</div>
+      </div>
+      <div class="arr">--></div>
+      <div class="fn hl">
+        <div class="fn-box"><span class="fi">?</span></div>
+        <div class="fn2">Classification</div>
+        <div class="fl">business rules</div>
+      </div>
+      <div class="arr">--></div>
+      <div class="fn hl">
+        <div class="fn-box"><span class="fi">AI</span></div>
+        <div class="fn2">LLM</div>
+        <div class="fl">explanation + action</div>
+      </div>
+      <div class="arr">--></div>
+      <div class="fn">
+        <span class="fi">[=]</span>
+        <div class="fn2">Report</div>
+        <div class="fl">evaluable output</div>
+      </div>
+    </div>
+  </div>
+  <div class="three-col">
+    <div class="card accent-blue">
+      <h3 class="sub">1. Rule-Based Classification</h3>
+      <p class="body-text">Define thresholds and logic to label each PO: <em>late only, low fill, both, or clean</em>. No LLM — pure Python.</p>
+    </div>
+    <div class="card accent-green">
+      <h3 class="sub">2. LLM Explanation</h3>
+      <p class="body-text">Use PO fields as context for the LLM to generate a paragraph explaining the problem, the risk, and the root cause.</p>
+    </div>
+    <div class="card accent-amber">
+      <h3 class="sub">3. Action Recommendation</h3>
+      <p class="body-text">The LLM chooses between <em>Vendor Outreach</em> or <em>Escalate to Merchant</em> and justifies the decision based on DNP ranking, OOS risk, and margin.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 4 — THE DATA -->
+<div class="slide" style="background:#0f1117;">
+  <div class="slide-num">04</div>
+  <div class="slide-label">The Dataset</div>
+  <h2 class="slide-title">The data you'll work with</h2>
+  <div class="two-col">
+    <div>
+      <div style="margin-bottom:16px;">
+        <div style="font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#546e7a;margin-bottom:8px;">File</div>
+        <div style="font-family:'Consolas',monospace;font-size:0.85rem;color:#4fc3f7;background:#0d1117;border:1px solid #1c2a38;border-radius:6px;padding:10px 14px;">
+          vendor_fill_rate_synthetic.csv
+        </div>
+      </div>
+      <div style="display:flex;gap:20px;margin-bottom:20px;">
+        <div class="stat-big"><div class="num" style="font-size:2rem;">400</div><div class="lbl">POs</div></div>
+        <div class="stat-big"><div class="num" style="font-size:2rem;">53</div><div class="lbl">Columns</div></div>
+        <div class="stat-big"><div class="num" style="font-size:2rem;">12</div><div class="lbl">Vendors</div></div>
+        <div class="stat-big"><div class="num" style="font-size:2rem;">10</div><div class="lbl">DCs</div></div>
+      </div>
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#546e7a;margin-bottom:8px;">Scenario Mix</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="background:#ffa726;height:10px;border-radius:2px;width:25%;"></div>
+          <span style="font-size:0.78rem;color:#90a4ae;">25% — Late delivery only</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="background:#ef5350;height:10px;border-radius:2px;width:30%;"></div>
+          <span style="font-size:0.78rem;color:#90a4ae;">30% — Low fill rate</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="background:#ab47bc;height:10px;border-radius:2px;width:20%;"></div>
+          <span style="font-size:0.78rem;color:#90a4ae;">20% — Both issues</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="background:#4caf50;height:10px;border-radius:2px;width:25%;"></div>
+          <span style="font-size:0.78rem;color:#90a4ae;">25% — Clean PO (no exception)</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#546e7a;margin-bottom:10px;">Key Fields</div>
+      <div class="field-grid">
+        <div class="field-row"><span class="fn-name k">PO_NBR</span><span class="fn-desc">Purchase Order identifier</span></div>
+        <div class="field-row"><span class="fn-name k">VENDOR_NAME - VENDOR_NBR</span><span class="fn-desc">Who supplies</span></div>
+        <div class="field-row"><span class="fn-name k">SKU_NBR - DC_ID</span><span class="fn-desc">Which product, to which DC</span></div>
+        <div class="field-row"><span class="fn-name m">FILL_RATE</span><span class="fn-desc">% received vs ordered — threshold 85%</span></div>
+        <div class="field-row"><span class="fn-name m">FILL_RATE_WK_1..7</span><span class="fn-desc">7-week history for trend analysis</span></div>
+        <div class="field-row"><span class="fn-name m">RECEIPT_DELAY_DAYS</span><span class="fn-desc">Days late — flagged if &gt; 5</span></div>
+        <div class="field-row"><span class="fn-name m">AVG_FILL_RATE_4WK - 8WK</span><span class="fn-desc">Fill rate trend averages</span></div>
+        <div class="field-row"><span class="fn-name m">DC_BOH - STORE_BOH - TOTAL_WOS</span><span class="fn-desc">Available inventory levels</span></div>
+        <div class="field-row"><span class="fn-name f">OOS_LIKELY - LATE_ISSUE</span><span class="fn-desc">Pre-computed risk flags</span></div>
+        <div class="field-row"><span class="fn-name m">DNP_RANKING - SKU_AVG_MARGIN</span><span class="fn-desc">SKU importance and profitability</span></div>
+        <div class="field-row"><span class="fn-name m">COMBINED_CAUSE</span><span class="fn-desc">Root cause — context for LLM</span></div>
+        <div class="field-row"><span class="fn-name o">COMBINED_ACTION</span><span class="fn-desc">Ground truth label — for evaluating LLM output</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 5 — THE RULES -->
+<div class="slide" style="background:#0a0e17;">
+  <div class="slide-num">05</div>
+  <div class="slide-label">Classification Logic</div>
+  <h2 class="slide-title">Business rules to implement</h2>
+  <div class="two-col">
+    <div>
+      <div class="rule-box late">
+        <div class="rule-title">Late Only</div>
+        <div class="rule-cond">RECEIPT_DELAY_DAYS &gt; 5
+AND FILL_RATE &gt;= 85</div>
+        <div class="rule-action">Suggested action: <span>Vendor Outreach</span> — contact vendor to track shipment and prevent recurrence</div>
+      </div>
+      <div class="rule-box low-fr">
+        <div class="rule-title">Low Fill Rate</div>
+        <div class="rule-cond">FILL_RATE &lt; 85
+AND RECEIPT_DELAY_DAYS &lt;= 5</div>
+        <div class="rule-action">Suggested action: <span>Vendor Outreach</span> or <span>Escalate to Merchant</span> depending on DNP_RANKING and OOS_LIKELY</div>
+      </div>
+      <div class="rule-box both">
+        <div class="rule-title">Both (Critical)</div>
+        <div class="rule-cond">FILL_RATE &lt; 85
+AND RECEIPT_DELAY_DAYS &gt; 5</div>
+        <div class="rule-action">Suggested action: <span>Escalate to Merchant</span> — high OOS risk, requires buyer intervention</div>
+      </div>
+      <div class="rule-box clean">
+        <div class="rule-title">Clean</div>
+        <div class="rule-cond">FILL_RATE &gt;= 85
+AND RECEIPT_DELAY_DAYS &lt;= 5</div>
+        <div class="rule-action">No active exception — can be used as a <span>negative case</span> in evaluation</div>
+      </div>
+    </div>
+    <div>
+      <h3 class="sub" style="margin-bottom:14px;">Escalation Factors</h3>
+      <div class="card" style="margin-bottom:14px;">
+        <ul class="blist">
+          <li><strong>DNP Top 10%</strong> — High-margin SKU: always escalate if OOS risk is present</li>
+          <li><strong>OOS_LIKELY = Y</strong> — Imminent stockout: top priority regardless of fill rate</li>
+          <li><strong>AVG_FILL_RATE_8WK &lt; 80</strong> — Recurring issue: the LLM should explicitly mention it</li>
+          <li><strong>STORE_COUNT &gt; 100</strong> — Many stores impacted: increases recommendation urgency</li>
+          <li><strong>NEW_ISSUE_FLAG</strong> — New vs recurring issue changes the tone of the recommendation</li>
+        </ul>
+      </div>
+      <div class="callout blue">
+        <strong>Implementation tip:</strong> Build the rules in pure Python first (no LLM) and verify that your classification matches <code style="font-size:0.82rem;background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:3px;">COMBINED_ACTION</code> in at least 75% of cases before integrating the LLM.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 6 — THE PROMPT -->
+<div class="slide" style="background:#0f1117;">
+  <div class="slide-num">06</div>
+  <div class="slide-label">Prompt Engineering</div>
+  <h2 class="slide-title">How to structure the <span>LLM</span> prompt</h2>
+  <div class="two-col">
+    <div>
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#546e7a;margin-bottom:10px;">Reference Template</div>
+      <div class="prompt-box">
+<span class="cm">### System</span>
+You are a supply chain analyst specialized
+in vendor compliance. Your goal is to explain
+Purchase Order exceptions clearly and
+recommend the correct action.
+
+<span class="cm">### User</span>
+Analyze this PO exception:
+
+Vendor: <span class="ph">{VENDOR_NAME}</span>
+PO: <span class="ph">{PO_NBR}</span> | SKU: <span class="ph">{SKU_NBR}</span> | DC: <span class="ph">{DC_ID}</span>
+Category: <span class="ph">{CATEGORY}</span> | Priority: <span class="ph">{DNP_RANKING}</span>
+
+Current Fill Rate: <span class="ph">{FILL_RATE}</span>%
+4-Week Average: <span class="ph">{AVG_FILL_RATE_4WK}</span>%
+Delay: <span class="ph">{RECEIPT_DELAY_DAYS}</span> days
+OOS Risk: <span class="ph">{OOS_LIKELY}</span>
+Total WOS: <span class="ph">{TOTAL_WEEKS_OF_SUPPLY}</span> weeks
+Root Cause: <span class="ph">{COMBINED_CAUSE}</span>
+
+Generate: (1) a 2-3 sentence explanation of
+the problem, (2) a recommended action with
+justification.</div>
+    </div>
+    <div>
+      <h3 class="sub" style="margin-bottom:12px;">What the LLM output should include</h3>
+      <ul class="clist" style="margin-bottom:18px;">
+        <li>Clearly identify whether it's a fill rate, delay, or combined issue</li>
+        <li>Mention the inventory impact (WOS, OOS risk)</li>
+        <li>Reference whether this is a recurring or new issue</li>
+        <li>Choose between <em>Vendor Outreach</em> or <em>Escalate to Merchant</em></li>
+        <li>Justify the action based on DNP ranking and margin</li>
+        <li>Professional tone, 4 sentences maximum</li>
+      </ul>
+      <div class="callout amber">
+        <strong>Important:</strong> The <code style="font-size:0.82rem;background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:3px;">COMBINED_ACTION</code> field in the CSV is the <em>ground truth label</em>. Use it to evaluate whether the LLM is making the right decision — do not show it to the LLM as input.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 7 — EVALUATION -->
+<div class="slide" style="background:#0a0e17;">
+  <div class="slide-num">07</div>
+  <div class="slide-label">Measuring Success</div>
+  <h2 class="slide-title">Evaluation <span>criteria</span></h2>
+  <div style="background:#161b22;border:1px solid #1c2a38;border-radius:12px;overflow:hidden;margin-bottom:20px;">
+    <table class="eval-table">
+      <thead>
+        <tr><th>Dimension</th><th>How to Measure</th><th>Threshold</th><th>Type</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:#e2e8f0">Classification Accuracy</strong><br><span style="font-size:0.76rem;">Python rules vs ground truth</span></td>
+          <td>% of POs where your type (late/low fill/both/clean) matches the CSV flags</td>
+          <td style="color:#4caf50;font-weight:700;">&gt; 80%</td>
+          <td><span class="tag tag-required">Required</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:#e2e8f0">LLM Action Accuracy</strong><br><span style="font-size:0.76rem;">LLM output vs COMBINED_ACTION</span></td>
+          <td>% of POs where the LLM picks the same action as the label (Vendor Outreach / Escalate)</td>
+          <td style="color:#4caf50;font-weight:700;">&gt; 70%</td>
+          <td><span class="tag tag-required">Required</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:#e2e8f0">Explanation Quality</strong><br><span style="font-size:0.76rem;">Manual rubric on sample</span></td>
+          <td>Review 20 POs manually: does the explanation mention root cause, impact, and justify the action?</td>
+          <td style="color:#ffa726;font-weight:700;">4/5 points</td>
+          <td><span class="tag tag-required">Required</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:#e2e8f0">Critical PO Coverage</strong><br><span style="font-size:0.76rem;">Top 10% DNP with OOS=Y</span></td>
+          <td>Of the most critical POs (high margin + OOS risk), how many are classified correctly?</td>
+          <td style="color:#4caf50;font-weight:700;">&gt; 90%</td>
+          <td><span class="tag tag-required">Required</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:#e2e8f0">LLM-as-Judge</strong><br><span style="font-size:0.76rem;">Auto-evaluation with second LLM</span></td>
+          <td>Use another LLM call to score whether the explanation is correct, clear, and actionable (0-5)</td>
+          <td style="color:#ab47bc;font-weight:700;">&gt; 3.5 / 5</td>
+          <td><span class="tag tag-stretch">Stretch</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<!-- SLIDE 8 — DELIVERABLES -->
+<div class="slide" style="background:#0f1117;">
+  <div class="slide-num">08</div>
+  <div class="slide-label">Deliverables</div>
+  <h2 class="slide-title">What you'll deliver</h2>
+  <div class="deliv-grid">
+    <div class="deliv-item">
+      <div class="d-icon">[S]</div>
+      <h4>Final Presentation</h4>
+      <p>Slides + live demo or video. Show the full pipeline running on the synthetic dataset.</p>
+    </div>
+    <div class="deliv-item">
+      <div class="d-icon">[R]</div>
+      <h4>Code Repository</h4>
+      <p>Well-structured with README. Must include classification script, LLM call script, and evaluation script.</p>
+    </div>
+    <div class="deliv-item">
+      <div class="d-icon">[D]</div>
+      <h4>Technical Documentation</h4>
+      <p>Methodology: what rules you defined, why, how you designed the prompt, and what iterations you made.</p>
+    </div>
+    <div class="deliv-item">
+      <div class="d-icon">[A]</div>
+      <h4>Data Artifacts</h4>
+      <p>Input CSV + output CSV with classification, LLM explanation, and recommended action for every PO.</p>
+    </div>
+    <div class="deliv-item">
+      <div class="d-icon">[E]</div>
+      <h4>Evaluation Results</h4>
+      <p>Table with all metrics: classification accuracy, action accuracy, explanation quality score.</p>
+    </div>
+    <div class="deliv-item">
+      <div class="d-icon">[F]</div>
+      <h4>Findings & Recommendations</h4>
+      <p>What you learned, where the LLM fails, how to improve the prompt, what you'd do differently in production.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 9 — TIMELINE -->
+<div class="slide" style="background:#0a0e17;">
+  <div class="slide-num">09</div>
+  <div class="slide-label">Timeline</div>
+  <h2 class="slide-title">Suggested work plan</h2>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-week">Week 1</div></div>
+        <div class="tl-right">
+          <h4>Setup & Exploration</h4>
+          <p>Load the CSV, exploratory analysis (fill rate distribution, frequent causes, top vendors), define classification rules on paper.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-week">Week 2</div></div>
+        <div class="tl-right">
+          <h4>Rule-Based Classification</h4>
+          <p>Implement Python logic. Verify accuracy vs CSV labels. Adjust thresholds based on results.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-week">Week 3</div></div>
+        <div class="tl-right">
+          <h4>LLM Integration</h4>
+          <p>Design the prompt, connect the Claude API, generate explanations for all POs. First round of evaluation.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-left"><div class="tl-week">Week 4</div></div>
+        <div class="tl-right">
+          <h4>Evaluation & Refinement</h4>
+          <p>Measure all metrics, iterate on the prompt, document findings, prepare final presentation.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3 class="sub" style="margin-bottom:14px;">Suggested Tech Stack</h3>
+      <div class="card" style="margin-bottom:14px;">
+        <ul class="blist">
+          <li><strong>pandas</strong> — load the CSV and apply classification rules</li>
+          <li><strong>Claude API (claude-sonnet-4-6)</strong> — generate explanations and recommendations</li>
+          <li><strong>Python dicts / JSON</strong> — structure LLM output</li>
+          <li><strong>Jupyter Notebook</strong> — for exploration and iterative documentation</li>
+          <li><strong>GitHub</strong> — version control and deliverable submission</li>
+        </ul>
+      </div>
+      <div class="callout blue">
+        <strong>No Snowflake needed.</strong> The entire project runs locally with the synthetic CSV. The real architecture uses the same rules and same type of prompt — the only difference is that in production the data comes from a Snowflake query.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SLIDE 10 — CLOSING -->
+<div class="slide cover" style="background:linear-gradient(135deg,#0a1628 0%,#0d2137 50%,#0a3d62 100%);">
+  <div class="slide-num" style="color:#1a3a5c;">10</div>
+  <div class="eyebrow">Ready to start</div>
+  <h1 style="font-size:2.4rem;">Questions?</h1>
+  <p class="subtitle">The dataset is already generated. You just need to load it, define your rules, and connect the LLM.</p>
+  <div class="cover-pills">
+    <span class="cover-pill">vendor_fill_rate_synthetic.csv</span>
+    <span class="cover-pill">400 POs - 53 fields</span>
+    <span class="cover-pill">Ground truth labels included</span>
+  </div>
+  <div class="cover-meta">Mentor: Supply Chain AI Team<br>Suggested model: claude-sonnet-4-6</div>
+</div>
+
+<div class="deck-footer">
+  <span>MAS Mentor Projects - Vendor Fill Rate Exception Agent - Kickoff 2026</span>
+  <span>vendor_fill_rate_synthetic.csv - 400 records - No PII</span>
+</div>
+
+</body>
+</html>
