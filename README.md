@@ -59,6 +59,10 @@ clean        : FILL_RATE        >= 85  AND  RECEIPT_DELAY_DAYS <= 5
 | Ambos problemas (crítico) | ~20% |
 | PO limpio (sin excepción) | ~25% |
 
+### Diccionario de palabras clave
+
+´SKU´: Stock Keeping Unit (Unidad de Mantenimiento de Stock)
+
 ### Diccionario de campos clave
 
 | Campo | Descripción |

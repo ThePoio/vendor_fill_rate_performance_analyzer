@@ -1,0 +1,3 @@
+Cosas interesantes que me estoy dando cuenta a lo largo del codigo:
+*El sku se utiliza como una especie de Id del producto (falta investigacion y confirmacion)
+Hay varias columnas que aparecen en el README que no existen en la base. No obstante, esto es raro. Se hara un informe al respecto mas adelante.
