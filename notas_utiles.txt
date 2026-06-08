@@ -1,3 +1,12 @@
-Cosas interesantes que me estoy dando cuenta a lo largo del codigo:
-*El sku se utiliza como una especie de Id del producto (falta investigacion y confirmacion)
-Hay varias columnas que aparecen en el README que no existen en la base. No obstante, esto es raro. Se hara un informe al respecto mas adelante.
+Notas del EDA:
+-sku se refiere a un tipo de ID del producto en especifico
+-La variable de si es nuevo proveedor no se encuentra directamente en el dataset, habrá de preguntarse
+-Se puede ver un desbalanceo en el target (combined_action) de alrededor de 70/30 por lo que la evaluación principalmente se daría con F1-score.
+-OOS_LIKELY variable relevante para el modelo, ya que en casi todos casos de "Escalate" está el factor de probabilidad de quedarse sin stock.
+-AVG_FILL_RATE_8WK nos ayuda a separar las clases, sin embargo, no es la variable más relevante, solo es necesario mencionarla en el LLM. Existen muchos casos atípicos de donde se llega a "vendor outreach" incluso sin pasar el 60%.
+-La cantidad de stock no parece afectar mucho en la decisión, se podría decir que hay un umbral en 1000 unidades, donde es más probable recurrir a "Escalate" si no alcanzan esas unidades.
+-Pasa algo similar en las tiendas afectadas, tener mayor promedio suele inclinarse un poco más a la clasificación de "escalate" y es un umbral relevante en el contexto del problema, pero no tanto para la clasificación.
+-En cuando a "Late_issue" siguen la misma distribución ambas clases, por lo que no parece ser relevante a priori. En caso contrario "Vendor_issue" sí es relevante, ya que el 100% de las clasifiaciones de "escalate" existe un problema con el proveedor.
+-Las mayores correlaciones relevantes son "fill_rate" con: "store_in_stock_pct" y "in_stock_percent", es complicado encontrar correlaciones relevantes por el hecho de que muchas variables dependen de otras por obvias razones.
+-Hay correlación negativa entre "Store_boh" y "Total_weeks_of_supply".
+
