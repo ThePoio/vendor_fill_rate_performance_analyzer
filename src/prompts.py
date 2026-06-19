@@ -93,18 +93,18 @@ def obtener_prompt_asistente():
         ### User
         Analiza esta excepción de PO:
 
-        Vendor: {VENDOR_NAME}
-        PO: {PO_NBR} | SKU: {SKU_NBR} | DC: {DC_ID}
-        Categoría: {CATEGORY} | Importancia: {DNP_RANKING}
+        Vendor: {{VENDOR_NAME}}
+        PO: {{PO_NBR}} | SKU: {{SKU_NBR}} | DC: {{DC_ID}}
+        Categoría: {{CATEGORY}} | Importancia: {{DNP_RANKING}}
 
-        Fill Rate actual:  {FILL_RATE}%
-        Promedio 4 sem:    {AVG_FILL_RATE_4WK}%
-        Promedio 8 sem:    {AVG_FILL_RATE_8WK}%
-        Retraso:           {RECEIPT_DELAY_DAYS} días
-        Riesgo OOS:        {OOS_LIKELY}
-        WOS total:         {TOTAL_WEEKS_OF_SUPPLY} semanas
-        Tiendas afectadas: {STORE_COUNT} tiendas
-        Causa raíz:        {COMBINED_CAUSE}
+        Fill Rate actual:  {{FILL_RATE}}%
+        Promedio 4 sem:    {{AVG_FILL_RATE_4WK}}%
+        Promedio 8 sem:    {{AVG_FILL_RATE_8WK}}%
+        Retraso:           {{RECEIPT_DELAY_DAYS}} días
+        Riesgo OOS:        {{OOS_LIKELY}}
+        WOS total:         {{TOTAL_WEEKS_OF_SUPPLY}} semanas
+        Tiendas afectadas: {{STORE_COUNT}} tiendas
+        Causa raíz:        {{COMBINED_CAUSE}}
 
         Genera:
         Explicación del problema en máximo 4 oraciones.
