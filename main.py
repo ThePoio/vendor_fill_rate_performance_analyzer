@@ -1,15 +1,32 @@
-from src.chains import crear_cadena_principal
+# main.py
+from src.graph import construir_grafo, cargar_csv_optimizado
 
 def main():
-    print("Inicializando el sistema...")
-    cadena = crear_cadena_principal()
+    print("Inicializando Arquitectura LangGraph")
     
-    # Prueba rápida
-    pregunta = "¿Qué ventajas tiene estructurar un proyecto de software en módulos?"
-    print(f"\nUser: {pregunta}")
+    # 1. Compilar el grafo
+    app = construir_grafo()
     
-    respuesta = cadena.invoke({"input": pregunta})
-    print(f"\nAI: {respuesta}")
+    # 2. Cargar los datos del CSV automáticamente
+    datos_contexto = cargar_csv_optimizado()
+    
+    # 3. Pregunta de prueba para el test
+    pregunta = "¿Cuales son los 3 principales proveedores con excepciones que puedan considerarse peligrosas o que deban tomar atencion?"
+    print(f"\nUsuario: {pregunta}")
+    
+    # 4. Definir el estado inicial
+    estado_inicial = {
+        "input": pregunta,
+        "contexto_bd": datos_contexto,
+        "respuesta": ""
+    }
+    
+    # 5. Ejecutar el grafo (Llamada a la API de openai)
+    print("\nLlamando a la API de openai (gpt-4o-mini)...")
+    estado_final = app.invoke(estado_inicial)
+    
+    # 6. Mostrar el resultado del test
+    print(f"\nRespuesta de openai:\n{estado_final['respuesta']}")
 
 if __name__ == "__main__":
     main()
