@@ -13,14 +13,14 @@ class EstadoProyecto(TypedDict):
     respuesta: str      # La respuesta final generada por openai
 
 def cargar_csv_optimizado():
-    """Lee el CSV, filtra las columnas clave y lo convierte a formato JSON para la API."""
     try:
-        df = pd.read_csv("data/vendor_fill_rate_synthetic.csv")
-        
-        # Convertimos a JSON string (es el formato más ligero y limpio para enviar por API)
-        return df.to_json(orient="records", force_ascii=False)
+        import pandas as pd
+        df = pd.read_csv("src/vendor_fill_rate_clean.csv")
+        return df.head(5).to_csv(index=False) # Caso de prueba con solo 5 filas
+    except FileNotFoundError:
+        return "Error: No se encontró el archivo."
     except Exception as e:
-        return f"Error cargando base de datos: {e}"
+        return f"Error: {e}"
 
 # 2. Definimos el Nodo Principal
 def nodo_generar_recomendacion(state: EstadoProyecto):

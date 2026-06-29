@@ -9,10 +9,10 @@ def obtener_prompt_asistente():
 
         OBJETIVO:
         Tu trabajo es tomar una decisión a partir de las Purchase Orders que te lleguen, tomando unas de estas 3 acciones:
-        -Sin excepción
+        -Without Exception
         -Vendor Outreach
         -Escalate to Merchant
-        La acción que se decida se debe de regir en las reglas de negocio.
+        Para determinar si un caso requiere una acción, analiza probabilísticamente en base a las características. Se te mencionaran reglas de negocio, pero considera el peso combinado de todos los factores.
 
         REGLAS DE NEGOCIO:
         Tipos de excepciones:
@@ -91,22 +91,12 @@ def obtener_prompt_asistente():
         Acción tomada: Sin excepción
 
         ### User
-        Analiza esta excepción de PO:
+        Se te facilitará una base de datos donde tendrás que analizar excepciones de PO.
 
-        Vendor: {{VENDOR_NAME}}
-        PO: {{PO_NBR}} | SKU: {{SKU_NBR}} | DC: {{DC_ID}}
-        Categoría: {{CATEGORY}} | Importancia: {{DNP_RANKING}}
+        Datos de proveedores:
+        {contexto_bd}
 
-        Fill Rate actual:  {{FILL_RATE}}%
-        Promedio 4 sem:    {{AVG_FILL_RATE_4WK}}%
-        Promedio 8 sem:    {{AVG_FILL_RATE_8WK}}%
-        Retraso:           {{RECEIPT_DELAY_DAYS}} días
-        Riesgo OOS:        {{OOS_LIKELY}}
-        WOS total:         {{TOTAL_WEEKS_OF_SUPPLY}} semanas
-        Tiendas afectadas: {{STORE_COUNT}} tiendas
-        Causa raíz:        {{COMBINED_CAUSE}}
-
-        Genera:
+        Genera para cada caso relevante:
         Explicación del problema en máximo 4 oraciones.
         Acción recomendada con justificación.
 
