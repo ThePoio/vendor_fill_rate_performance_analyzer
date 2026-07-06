@@ -15,12 +15,6 @@ def limpiar_dataset(ruta_entrada, ruta_salida):
     ]
     df = df[columnas]
 
-    # Etiqueta sin excepción de acuerdo a las reglas
-    df.loc[
-        (df["FILL_RATE"] > 85) & (df["RECEIPT_DELAY_DAYS"] <= 5),
-        "COMBINED_ACTION"
-    ] = "Without Exception"
-
     # Estandariza texto
     df["COMBINED_CAUSE"] = df["COMBINED_CAUSE"].str.strip()
 
