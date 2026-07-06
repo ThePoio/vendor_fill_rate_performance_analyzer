@@ -4,10 +4,26 @@ from langchain_core.tools import tool
 
 @tool
 def cargar_base_datos() -> str:
-    """Carga la base de datos de proveedores."""
+    """Carga y limpia la base de datos de proveedores."""
     try:
-        df = pd.read_csv("src/vendor_fill_rate_clean.csv")
-        return df
+        df = pd.read_csv("src/vendor_fill_rate_synthetic.csv")
+
+        columnas = [
+            "VENDOR_NAME", "SKU_NBR", "DC_ID", "CATEGORY",
+            "DNP_RANKING", "FILL_RATE", "TOTAL_WEEKS_OF_SUPPLY",
+            "RECEIPT_DELAY_DAYS", "OOS_LIKELY", "FILL_RATE_ISSUE",
+            "AVG_FILL_RATE_4WK", "AVG_RECEIPT_DELAY_4WK",
+            "AVG_FILL_RATE_8WK", "AVG_RECEIPT_DELAY_8WK",
+            "STORE_COUNT", "COMBINED_CAUSE"
+        ]
+        df = df[columnas]
+
+        df["COMBINED_CAUSE"] = df["COMBINED_CAUSE"].str.strip()
+
+        df.to_csv("src/vendor_fill_rate_clean.csv", index=False)
+
+        return df.to_csv(index=False)
+
     except FileNotFoundError:
         return "Error: No se encontró el archivo."
     except Exception as e:
@@ -21,6 +37,7 @@ def buscar_en_base(query: str) -> str:
         from langchain_core.prompts import ChatPromptTemplate
         from langchain_core.output_parsers import StrOutputParser
         import json
+        from src.prompts import obtener_prompt_filtros
 
         df = pd.read_csv("src/vendor_fill_rate_clean.csv")
         
@@ -28,43 +45,20 @@ def buscar_en_base(query: str) -> str:
         categorias = str(df["CATEGORY"].unique().tolist())
         proveedores = str(df["VENDOR_NAME"].unique().tolist())
         
-        llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=300)
+        llm = ChatOpenAI(model="gpt-4o", temperature=0, max_tokens=500)
         
-        system_msg = (
-
-    "Eres un asistente que genera filtros para buscar en un DataFrame de proveedores.\n\n"
-    "Valores reales disponibles en el CSV:\n"
-    "- COMBINED_CAUSE: " + causas + "\n"
-    "- CATEGORY: " + categorias + "\n"
-    "- VENDOR_NAME: " + proveedores + "\n\n"
-    "Columnas numéricas: FILL_RATE, RECEIPT_DELAY_DAYS, TOTAL_WEEKS_OF_SUPPLY, "
-    "AVG_FILL_RATE_4WK, AVG_FILL_RATE_8WK, AVG_RECEIPT_DELAY_4WK, AVG_RECEIPT_DELAY_8WK, STORE_COUNT.\n\n"
-    "Responde SOLO con una lista JSON válida sin backticks ni markdown.\n"
-    "Cada elemento debe tener: tipo, columna, operador y valor para numéricos.\n"
-    "Para texto: tipo, columna y valor.\n"
-    "Si no hay filtro: lista con un elemento de tipo ninguno.\n"
-    "Usa EXACTAMENTE los valores del CSV para filtros de texto.\n"
-    "Si la pregunta es ambigua o no encaja exactamente con una columna, "
-    "sigue las reglas de negocio: busca el filtro más parecido al contexto de la pregunta. "
-    "Por ejemplo, si preguntan por proveedores peligrosos o en riesgo, "
-    "filtra por indicadores negativos como FILL_RATE bajo o RECEIPT_DELAY_DAYS alto. "
-    "NUNCA respondas: tipo ninguno. si la pregunta implica buscar algo en los datos."
-                      
-        )
-
-        prompt_filtro = ChatPromptTemplate.from_messages([
-            ("system", system_msg),
-            ("human", "{query}")
-        ])
-
+        prompt_filtro = obtener_prompt_filtros(causas, categorias, proveedores)
         cadena_filtro = prompt_filtro | llm | StrOutputParser()
         resultado_filtro = cadena_filtro.invoke({"query": query})
         
-        # Limpia backticks por si acaso
         resultado_filtro = resultado_filtro.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
         print(f"Filtro generado: {resultado_filtro}")
 
-        filtros = json.loads(resultado_filtro)
+        data = json.loads(resultado_filtro)
+
+        filtros = data.get("filtros", [])
+        limite = data.get("limite", 5)
+        ordenar_por = data.get("ordenar_por", None)
 
         for filtro in filtros:
             if filtro["tipo"] == "ninguno":
@@ -88,10 +82,16 @@ def buscar_en_base(query: str) -> str:
                 val = filtro["valor"]
                 df = df[df[col].str.contains(val, case=False, na=False)]
 
+        if ordenar_por:
+            col = ordenar_por["columna"]
+            direccion = ordenar_por.get("direccion", "desc") == "asc"
+            df = df.sort_values(col, ascending=direccion)
+
         if df.empty:
             return "No se encontraron resultados para ese filtro."
 
-        return df.head(10).to_csv(index=False)
+        return df.head(limite).to_csv(index=False)
+        print(f"Filtro aplicado: {data}")
 
     except Exception as e:
         return f"Error: {e}"
