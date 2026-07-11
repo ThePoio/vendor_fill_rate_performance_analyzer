@@ -18,11 +18,12 @@ def inicializar_llm():
             "2. Estás ejecutando el comando desde la carpeta incorrecta.\n"
             " Ruta actual de ejecución: " + os.getcwd()
         )
-    #Se usara gpt-4o-mini
+    #Se usara gpt-5.4-nano
 
     return ChatOpenAI(
-        model="gpt-4o-mini",
+        model="gpt-5.4-nano",
         temperature=0.3,
         timeout=None,
         max_retries=2,
+        max_tokens=800
     )

@@ -27,7 +27,7 @@ def main():
     }
     
     # 5. Ejecutar el grafo (Llamada a la API de openai)
-    print("\nLlamando a la API de openai (gpt-4o-mini)...")
+    print("\nLlamando a la API de openai (gpt-5.4-nano)...")
     estado_final = app.invoke(estado_inicial)
     
     # 6. Mostrar el resultado del test
