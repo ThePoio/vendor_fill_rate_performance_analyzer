@@ -25,5 +25,4 @@ def inicializar_llm():
         temperature=0.3,
         timeout=None,
         max_retries=2,
-        max_tokens=800
     )

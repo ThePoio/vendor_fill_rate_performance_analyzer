@@ -8,3 +8,4 @@ venv/
 .slides
 *.csv
 .phoenix_data
+wasm/
