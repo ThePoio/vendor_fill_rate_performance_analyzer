@@ -16,6 +16,16 @@ def nodo_buscar_datos(state: EstadoProyecto):
     resultado = buscar_en_base.invoke({"query": state["input"]})
     return {"contexto_bd": resultado}
 
+def cargar_csv_optimizado():
+    try:
+        import pandas as pd
+        df = pd.read_csv("src/vendor_fill_rate_clean.csv")
+        return df.head(5).to_csv(index=False) # Caso de prueba con solo 5 filas
+    except FileNotFoundError:
+        return "Error: No se encontró el archivo."
+    except Exception as e:
+        return f"Error: {e}"
+
 # Nodo principal
 def nodo_generar_recomendacion(state: EstadoProyecto):
     llm = inicializar_llm()
