@@ -21,8 +21,9 @@ def inicializar_llm():
     #Se usara gpt-4o-mini
 
     return ChatOpenAI(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         temperature=0.3,
         timeout=None,
         max_retries=2,
+        max_tokens=800
     )
